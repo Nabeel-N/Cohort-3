@@ -15,18 +15,14 @@ export function Otp() {
         onDone={() => {
           ref2.current.focus();
         }}
-        goBack={() =>{
-
-        }}
+        goBack={() => {}}
       />
       <Subotpbox
         reference={ref2}
         onDone={() => {
           ref3.current.focus();
         }}
-        goBack={() =>{
-
-        }}
+        goBack={() => {}}
       />
 
       <Subotpbox
@@ -53,7 +49,6 @@ export function Otp() {
         onDone={() => {
           ref6.focus();
         }}
-
       />
     </div>
   );
@@ -62,14 +57,12 @@ export function Otp() {
 function Subotpbox({ reference, onDone }) {
   return (
     <div>
-      <input
-        ref={reference}
-        onChange={(e) => {
+      <input ref={reference} onChange={(e) => {
           onDone();
         }}
         type="text"
-        className="m-2 w-[40px] h-[50px] rounded 2xl bg-blue-500 outline-none"
-      ></input>
+        className="m-2 w-[40px] h-[50px] rounded 2xl bg-blue-500 outline-none">
+        </input>
     </div>
   );
 }

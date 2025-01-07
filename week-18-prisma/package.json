@@ -1,0 +1,13 @@
+{
+  "name": "create-p",
+  "version": "0.0.1",
+  "devDependencies": {
+    "prisma": "^6.1.0"
+  },
+  "scripts": {
+    "dev": "tsc -b  && node ./dist/index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.1.0"
+  }
+}
