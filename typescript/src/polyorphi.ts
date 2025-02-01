@@ -1,26 +1,37 @@
-"use strict";
-class Animal {
-    constructor(name) {
+export class Animal {
+    name: string;
+
+    constructor(name: string) {
         this.name = name;
     }
-    makeSound() {
+
+    makeSound(): void {
         console.log(`${this.name} makes a sound.`);
     }
 }
+
 class Dog extends Animal {
-    makeSound() {
+    makeSound(): void {
         console.log(`${this.name} barks.`);
     }
 }
+
 class Cat extends Animal {
-    makeSound() {
+    makeSound(): void {
         console.log(`${this.name} meows.`);
     }
 }
-const animals = [new Dog("Rex"), new Cat("Whiskers")];
+
+const animals: Animal[] = [new Dog("Rex"), new Cat("Whiskers")];
+
 animals.forEach((animal) => {
     animal.makeSound();
 });
-// Output:
+// Output:=
 // Rex barks.
 // Whiskers meows.
+
+
+
+
+

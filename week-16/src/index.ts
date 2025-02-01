@@ -14,4 +14,6 @@ wss.on("connection", function (socket) {
   });
 });
 
+console.log("hello")
+
 
