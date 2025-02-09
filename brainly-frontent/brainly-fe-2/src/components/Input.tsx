@@ -1,10 +1,20 @@
-interface InputProps { 
-    placeholder: string; 
-    reference?: any
+interface InputProps {
+  placeholder: string;
+  reference: React.RefObject<HTMLInputElement>;
+  className?: string;
 }
 
-export function Input({placeholder, reference}: InputProps) {
-    return <div>
-        <input ref={reference} placeholder={placeholder} type={"text"} className="px-4 py-2 border rounded m-2" ></input>
+export function Input({ placeholder, reference, className }: InputProps) {
+  return (
+    <div>
+      <input
+        className={`w-full border rounded border-gray-300 p-2 ${
+          className || ""
+        }`}
+        ref={reference}
+        placeholder={placeholder}
+        type="text"
+      />
     </div>
+  );
 }

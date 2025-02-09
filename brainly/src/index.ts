@@ -15,16 +15,21 @@ app.post("/api/v1/signup", async (req, res) => {
   try {
     const username = req.body.username;
     const password = req.body.password;
-
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
     const signup = await UserModel.create({
       username: username,
       password: password,
+      firstname: firstname,
+      lastname: lastname,
     });
     const response = res.json({
       message: "Singnup Successfull",
     });
   } catch (e) {
-    message: "User already exists";
+    res.status(411).json({
+      message: "User already exists",
+    });
   }
 });
 
@@ -58,14 +63,16 @@ app.post("/api/v1/signin", async (req, res) => {
 app.post("/api/v1/content", userMiddleware, async (req, res) => {
   const title = req.body.title;
   const link = req.body.link;
+  const userId = req.userId;
 
   const content = await ContentModel.create({
     title: title,
     link: link,
-    type:req.body.type,
-    userId: req.userId,
+    type: req.body.type,
+    userId: userId,
     tags: [],
   });
+  console.log(content);
   res.json({
     message: "Content added",
   });
@@ -88,33 +95,42 @@ app.delete("/api/v1/content", userMiddleware, async (req, res) => {
     userId,
     _id: contentId,
   });
+  console.log(deleteContent);
   res.json({
     message: "content deleted",
   });
 });
 
 app.post("/api/v1/brain/share", userMiddleware, async (req, res) => {
-  const share = req.body.share;
-  const userId = req.userId;
+  try {
+    const share = req.body.share;
+    const userId = req.userId;
 
-  if (share) {
-    const hash = random(10);
-    await LinkModel.create({
-      userId,
-      hash,
-    });
-
-    res.json({
-      message: "share/ " + hash,
-    });
-  } else {
-    await LinkModel.deleteOne({
-      userId: userId,
+    await LinkModel.deleteMany({ userId: userId });
+    if (share) {
+      const hash = random(10);
+      await LinkModel.create({
+        userId,
+        hash,
+      });
+      res.json({
+        message: `share/${hash}`,
+        hash: hash,
+      });
+    } else {
+      await LinkModel.deleteOne({
+        userId: userId,
+      });
+      res.json({
+        message: "removed link",
+      });
+    }
+  } catch (err) {
+    console.log("error sharing brain " + err);
+    res.json(500).json({
+      message: "Internal server Error",
     });
   }
-  res.json({
-    message: "removed link",
-  });
 });
 
 app.post("/api/v1/brain/:sharelink", async (req, res) => {
@@ -128,7 +144,6 @@ app.post("/api/v1/brain/:sharelink", async (req, res) => {
     });
     return;
   }
-
   const content = await ContentModel.findOne({
     userId: findLink.userId,
   });

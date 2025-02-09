@@ -15,7 +15,7 @@ export const userMiddleware = (req: Request,res: Response,  next: NextFunction) 
   const decoded = jwt.verify(header as string, JWT_PASSWORD);
   if (decoded) {
     //@ts-ignore
-    req.userid = decoded.id;
+    req.userId = decoded.id;
     next();
   } else {
     res.status(403).json({

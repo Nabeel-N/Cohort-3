@@ -27,16 +27,22 @@ app.post("/api/v1/signup", (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const username = req.body.username;
         const password = req.body.password;
+        const firstname = req.body.firstname;
+        const lastname = req.body.lastname;
         const signup = yield db_1.UserModel.create({
             username: username,
             password: password,
+            firstname: firstname,
+            lastname: lastname,
         });
         const response = res.json({
             message: "Singnup Successfull",
         });
     }
     catch (e) {
-        message: "User already exists";
+        res.status(411).json({
+            message: "User already exists",
+        });
     }
 }));
 app.post("/api/v1/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -64,13 +70,15 @@ app.post("/api/v1/signin", (req, res) => __awaiter(void 0, void 0, void 0, funct
 app.post("/api/v1/content", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.body.title;
     const link = req.body.link;
+    const userId = req.userId;
     const content = yield db_2.ContentModel.create({
         title: title,
         link: link,
         type: req.body.type,
-        userId: req.userId,
+        userId: userId,
         tags: [],
     });
+    console.log(content);
     res.json({
         message: "Content added",
     });
@@ -91,31 +99,42 @@ app.delete("/api/v1/content", middleware_1.userMiddleware, (req, res) => __await
         userId,
         _id: contentId,
     });
+    console.log(deleteContent);
     res.json({
         message: "content deleted",
     });
 }));
 app.post("/api/v1/brain/share", middleware_1.userMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const share = req.body.share;
-    const userId = req.userId;
-    if (share) {
-        const hash = (0, utils_1.random)(10);
-        yield db_1.LinkModel.create({
-            userId,
-            hash,
-        });
-        res.json({
-            message: "share/ " + hash,
+    try {
+        const share = req.body.share;
+        const userId = req.userId;
+        yield db_1.LinkModel.deleteMany({ userId: userId });
+        if (share) {
+            const hash = (0, utils_1.random)(10);
+            yield db_1.LinkModel.create({
+                userId,
+                hash,
+            });
+            res.json({
+                message: `share/${hash}`,
+                hash: hash,
+            });
+        }
+        else {
+            yield db_1.LinkModel.deleteOne({
+                userId: userId,
+            });
+            res.json({
+                message: "removed link",
+            });
+        }
+    }
+    catch (err) {
+        console.log("error sharing brain " + err);
+        res.json(500).json({
+            message: "Internal server Error",
         });
     }
-    else {
-        yield db_1.LinkModel.deleteOne({
-            userId: userId,
-        });
-    }
-    res.json({
-        message: "removed link",
-    });
 }));
 app.post("/api/v1/brain/:sharelink", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const hash = req.params.sharelink;
